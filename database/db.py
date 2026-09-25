@@ -32,7 +32,7 @@ def check_roster(student_id):
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT 1 FROM official_roster WHERE student_id = %s",
+                "SELECT 1 FROM official_roster WHERE UPPER(student_id) = %s",
                 (student_id,)
             )
             result = cur.fetchone()
