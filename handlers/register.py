@@ -36,14 +36,23 @@ async def verify_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "Wrong input. Please check your student ID and send it again."
         )
-        return ASKING_ID  # stay in this state, let them retry
+        return ASKING_ID
 
-    insert_registration(name, student_id, telegram_user_id)
+    try:
+        insert_registration(name, student_id, telegram_user_id)
+    except Exception as e:
+        await update.message.reply_text("Registration failed. Please try again.")
+        print(f"DB error: {e}")
+        return ConversationHandler.END
 
-    invite_link = await context.bot.create_chat_invite_link(
-        chat_id=int(GROUP_CHAT_ID),       # your group's chat ID
-        member_limit=1
-    )
-    await update.message.reply_text(f"Verified! Here's your invite link: {invite_link.invite_link}")
+    try:
+        invite_link = await context.bot.create_chat_invite_link(
+            chat_id=int(GROUP_CHAT_ID),
+            member_limit=1
+        )
+        await update.message.reply_text(f"Verified! Here's your invite link: {invite_link.invite_link}")
+    except Exception as e:
+        await update.message.reply_text("Registered! But failed to generate invite link. Contact the rep.")
+        print(f"Invite link error: {e}")
+
     return ConversationHandler.END
-

@@ -22,13 +22,14 @@ def main():
     telegram_app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("join", join)],
-        states={
-            ASKING_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_id)],
-            ASKING_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, verify_id)],
-        },
-        fallbacks=[],
-    )
+    entry_points=[CommandHandler("join", join)],
+    states={
+        ASKING_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_id)],
+        ASKING_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, verify_id)],
+    },
+    fallbacks=[CommandHandler("join", join)],  # allows restart mid-conversation
+    allow_reentry=True,                         # key fix
+)
 
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(conv_handler)
