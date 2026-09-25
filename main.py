@@ -36,5 +36,6 @@ def main():
     telegram_app.run_polling()
 
 if __name__ == "__main__":
-    Thread(target=run_flask).start()
+    Thread(target=run_flask, daemon=True).start()
+    import time; time.sleep(1)
     main()

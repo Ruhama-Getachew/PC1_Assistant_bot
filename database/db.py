@@ -13,8 +13,7 @@ def get_pool():
         _pool = psycopg2.pool.ThreadedConnectionPool(
             minconn=1,
             maxconn=10,
-            dsn=os.getenv("DATABASE_URL"),
-            sslmode="require",
+            dsn=os.getenv("DATABASE_URL") + "?sslmode=require",
         )
     return _pool
 
